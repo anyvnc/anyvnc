@@ -1,0 +1,22 @@
+include(AnyVnc)
+
+add_anyvnc_library(anyvnc-interfaces
+	ClientBackend.h
+	ClientBackend.cpp
+	Clipboard.h
+	Clipboard.cpp
+	Framebuffer.h
+	Framebuffer.cpp
+	Keyboard.h
+	Keyboard.cpp
+	Plugin.h
+	Plugin.cpp
+	PointingDevice.h
+	PointingDevice.cpp
+	ServerBackend.h
+	ServerBackend.cpp
+	ServerPlugin.h
+	ServerPlugin.cpp
+	UserInterface.h
+	UserInterface.cpp
+)

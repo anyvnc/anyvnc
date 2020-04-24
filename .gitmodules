@@ -1,0 +1,3 @@
+[submodule "plugins/framebuffer/android/auto.js"]
+	path = plugins/framebuffer/android/auto.js
+	url = ../auto.js

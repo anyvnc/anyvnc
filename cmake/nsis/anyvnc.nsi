@@ -1,0 +1,150 @@
+!define APP_NAME "AnyVNC"
+!define COMP_NAME "Veyon Solutions"
+!define WEB_SITE "https://anyvnc.com"
+!define VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_BUILD@"
+!define COPYRIGHT "2020 Veyon Solutions"
+!define DESCRIPTION "AnyVNC Installer"
+!define LICENSE_TXT "COPYING"
+!define INSTALLER_NAME "anyvnc-${VERSION}-@MINGW_PLATFORM@-setup.exe"
+!define INSTALL_TYPE "SetShellVarContext all"
+!define REG_ROOT "HKLM"
+
+######################################################################
+
+VIProductVersion  "${VERSION}"
+VIAddVersionKey "ProductName"  "${APP_NAME}"
+VIAddVersionKey "CompanyName"  "${COMP_NAME}"
+VIAddVersionKey "LegalCopyright"  "${COPYRIGHT}"
+VIAddVersionKey "FileDescription"  "${DESCRIPTION}"
+VIAddVersionKey "ProductVersion"  "${VERSION}"
+VIAddVersionKey "FileVersion"  "${VERSION}"
+
+######################################################################
+
+SetCompressor /SOLID Lzma
+Name "${APP_NAME}"
+Caption "${APP_NAME} ${VERSION}"
+OutFile "${INSTALLER_NAME}"
+BrandingText "${APP_NAME} ${VERSION}"
+XPStyle on
+#InstallDirRegKey "${REG_ROOT}" "${REG_APP_PATH}" ""
+InstallDir "$PROGRAMFILES64\AnyVNC"
+ShowInstDetails show
+RequestExecutionLevel admin
+
+######################################################################
+
+!include "LogicLib.nsh"
+!include "MUI2.nsh"
+!include "FileFunc.nsh"
+
+!define MUI_ABORTWARNING
+!define MUI_UNABORTWARNING
+
+!insertmacro MUI_PAGE_WELCOME
+
+#!insertmacro MUI_PAGE_LICENSE "${LICENSE_TXT}"
+
+!insertmacro MUI_PAGE_DIRECTORY
+
+# !insertmacro MUI_PAGE_COMPONENTS
+
+!insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_CONFIRM
+
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_UNPAGE_FINISH
+
+!insertmacro MUI_LANGUAGE "English" ;first language is the default language
+!insertmacro MUI_LANGUAGE "Afrikaans"
+!insertmacro MUI_LANGUAGE "Albanian"
+!insertmacro MUI_LANGUAGE "Arabic"
+!insertmacro MUI_LANGUAGE "Basque"
+!insertmacro MUI_LANGUAGE "Belarusian"
+!insertmacro MUI_LANGUAGE "Bosnian"
+!insertmacro MUI_LANGUAGE "Breton"
+!insertmacro MUI_LANGUAGE "Bulgarian"
+!insertmacro MUI_LANGUAGE "Catalan"
+!insertmacro MUI_LANGUAGE "Croatian"
+!insertmacro MUI_LANGUAGE "Czech"
+!insertmacro MUI_LANGUAGE "Danish"
+!insertmacro MUI_LANGUAGE "Dutch"
+!insertmacro MUI_LANGUAGE "Esperanto"
+!insertmacro MUI_LANGUAGE "Estonian"
+!insertmacro MUI_LANGUAGE "Farsi"
+!insertmacro MUI_LANGUAGE "Finnish"
+!insertmacro MUI_LANGUAGE "French"
+!insertmacro MUI_LANGUAGE "Galician"
+!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "Greek"
+!insertmacro MUI_LANGUAGE "Hebrew"
+!insertmacro MUI_LANGUAGE "Hungarian"
+!insertmacro MUI_LANGUAGE "Icelandic"
+!insertmacro MUI_LANGUAGE "Indonesian"
+!insertmacro MUI_LANGUAGE "Irish"
+!insertmacro MUI_LANGUAGE "Italian"
+!insertmacro MUI_LANGUAGE "Japanese"
+!insertmacro MUI_LANGUAGE "Korean"
+!insertmacro MUI_LANGUAGE "Kurdish"
+!insertmacro MUI_LANGUAGE "Latvian"
+!insertmacro MUI_LANGUAGE "Lithuanian"
+!insertmacro MUI_LANGUAGE "Luxembourgish"
+!insertmacro MUI_LANGUAGE "Macedonian"
+!insertmacro MUI_LANGUAGE "Malay"
+!insertmacro MUI_LANGUAGE "Mongolian"
+!insertmacro MUI_LANGUAGE "Norwegian"
+!insertmacro MUI_LANGUAGE "NorwegianNynorsk"
+!insertmacro MUI_LANGUAGE "Polish"
+!insertmacro MUI_LANGUAGE "Portuguese"
+!insertmacro MUI_LANGUAGE "PortugueseBR"
+!insertmacro MUI_LANGUAGE "Romanian"
+!insertmacro MUI_LANGUAGE "Russian"
+!insertmacro MUI_LANGUAGE "Serbian"
+!insertmacro MUI_LANGUAGE "SerbianLatin"
+!insertmacro MUI_LANGUAGE "SimpChinese"
+!insertmacro MUI_LANGUAGE "Slovak"
+!insertmacro MUI_LANGUAGE "Slovenian"
+!insertmacro MUI_LANGUAGE "Spanish"
+!insertmacro MUI_LANGUAGE "SpanishInternational"
+!insertmacro MUI_LANGUAGE "Swedish"
+!insertmacro MUI_LANGUAGE "Thai"
+!insertmacro MUI_LANGUAGE "TradChinese"
+!insertmacro MUI_LANGUAGE "Turkish"
+!insertmacro MUI_LANGUAGE "Ukrainian"
+!insertmacro MUI_LANGUAGE "Uzbek"
+!insertmacro MUI_LANGUAGE "Welsh"
+
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
+######################################################################
+
+Section
+ClearErrors
+ExecWait '"$INSTDIR\veyon-wcli.exe" service stop'
+SetOverwrite on
+SetOutPath "$INSTDIR\plugins"
+File "plugins/*.dll"
+SetOutPath "$INSTDIR\translations"
+File "translations/*.qm"
+ExecWait '"$INSTDIR\veyon-wcli.exe" service start'
+SectionEnd
+
+
+######################################################################
+
+Function .onInit
+UserInfo::GetAccountType
+pop $0
+${If} $0 != "admin"
+	MessageBox mb_iconstop "Please run the installer with administrative rights!"
+	SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+	Quit
+${EndIf}
+FunctionEnd
+
+######################################################################
+

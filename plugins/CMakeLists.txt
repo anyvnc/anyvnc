@@ -1,0 +1,6 @@
+add_subdirectory(backend)
+add_subdirectory(clipboard)
+add_subdirectory(framebuffer)
+add_subdirectory(keyboard)
+add_subdirectory(pointingdevice)
+add_subdirectory(ui)

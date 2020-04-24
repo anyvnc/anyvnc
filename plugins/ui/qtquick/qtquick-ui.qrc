@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/qtquick-ui">
+        <file>AnyVncUI.qml</file>
+    </qresource>
+</RCC>
