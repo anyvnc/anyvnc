@@ -61,7 +61,7 @@ QRgb pixelToRgb<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_565>(
 
 
 template<AndroidMediaProjectionFramebuffer::AndroidPixelFormat PIXEL_FORMAT>
-bool convertAndScan( const uchar* sourceImageData, int sourceRowStride, int width, int height, QRgb* destination,
+void convertAndScan( const uchar* sourceImageData, int sourceRowStride, int width, int height, QRgb* destination,
 					AndroidMediaProjectionFramebuffer::RectVector* rects )
 {
 	Types::Rectangle currentRect;
@@ -116,15 +116,12 @@ bool convertAndScan( const uchar* sourceImageData, int sourceRowStride, int widt
 	if( currentRect.isValid() )
 	{
 		rects->append( currentRect );
-		return true;
 	}
-
-	return false;
 }
 
 
 
-static bool updateBuffer( const uchar* sourceImageData,
+static void updateBuffer( const uchar* sourceImageData,
 				  AndroidMediaProjectionFramebuffer::AndroidPixelFormat sourceFormat,
 				  int sourceRowStride, QRgb* data, Types::Size size,
 				  AndroidMediaProjectionFramebuffer::RectVector* rects )
@@ -133,23 +130,24 @@ static bool updateBuffer( const uchar* sourceImageData,
 	{
 	case AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGBA_8888:
 	case AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGBX_8888:
-		return convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGBA_8888>(
+		convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGBA_8888>(
 			sourceImageData, sourceRowStride, size.width(), size.height(), data, rects );
+		break;
 
 	case AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_888:
-		return convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_888>(
+		convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_888>(
 			sourceImageData, sourceRowStride, size.width(), size.height(), data, rects );
+		break;
 
 	case AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_565:
-		return convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_565>(
+		convertAndScan<AndroidMediaProjectionFramebuffer::AndroidPixelFormat::RGB_565>(
 			sourceImageData, sourceRowStride, size.width(), size.height(), data, rects );
+		break;
 
 	default:
-		avqCritical() << "Invalid image format:" << static_cast<int>( sourceFormat );
+		avqCritical() << "Invalid image format:" << int(sourceFormat);
 		break;
 	}
-
-	return false;
 }
 
 
@@ -337,8 +335,6 @@ AndroidMediaProjectionFramebuffer::BufferState AndroidMediaProjectionFramebuffer
 		auto planes = planesArray.object<jobjectArray>();
 		const int planeCount = qjniEnv->GetArrayLength( planes );
 
-		bool updated{ false };
-
 		for( int planeIndex = 0; planeIndex < planeCount; ++planeIndex )
 		{
 			auto element = qjniEnv->GetObjectArrayElement( planes, planeIndex );
@@ -348,12 +344,13 @@ AndroidMediaProjectionFramebuffer::BufferState AndroidMediaProjectionFramebuffer
 			const auto byteBufferObject = byteBuffer.object<jobject>();
 			const auto sourceImageData = reinterpret_cast<const uchar *>( qjniEnv->GetDirectBufferAddress(byteBufferObject) );
 
-			updated |= updateBuffer( sourceImageData, imageFormat, rowStride, m_data, m_size, rects );
+			updateBuffer( sourceImageData, imageFormat, rowStride, m_data, m_size, rects );
 		}
 
 		avqDebug() << "Finished in" << benchTimer.elapsed();
 		return rotated ? BufferState::Rotated :
-					   updated ? BufferState::Updated : BufferState::Ready;
+					   rects->isEmpty() ? BufferState::Ready :
+										BufferState::Updated ;
 	}
 
 	return BufferState::WaitingForCapturer;
