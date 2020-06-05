@@ -83,8 +83,8 @@
             <!-- extract android style -->
         </activity>
         <service
-            android:name=".AnyVncAccessibilityService"
-            android:label="AnyVNC UI"
+            android:name="com.anyvnc.AnyVnc.AnyVncAccessibilityService"
+            android:label="AnyVNC"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:enabled="true"
             android:exported="false">

@@ -52,8 +52,8 @@ void AndroidPointingDevice::pressButton( Button button )
 {
 	switch( button )
 	{
-	case Button::Left: QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/PointingDevice/Android/AnyVncAccessibilityService", "tap", "(II)V", m_pos.x(), m_pos.y() ); break;
-	case Button::Right: QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/PointingDevice/Android/AnyVncAccessibilityService", "longPress", "(II)V", m_pos.x(), m_pos.y() ); break;
+	case Button::Left: QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/AnyVnc/AnyVncAccessibilityService", "tap", "(II)V", m_pos.x(), m_pos.y() ); break;
+	case Button::Right: QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/AnyVnc/AnyVncAccessibilityService", "longPress", "(II)V", m_pos.x(), m_pos.y() ); break;
 	default: break;
 	}
 
@@ -69,14 +69,14 @@ void AndroidPointingDevice::releaseButton( Button )
 
 void AndroidPointingDevice::scrollUp()
 {
-	QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/PointingDevice/Android/AnyVncAccessibilityService", "swipeDown", "(II)V", m_pos.x(), m_pos.y() );
+	QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/AnyVnc/AnyVncAccessibilityService", "swipeDown", "(II)V", m_pos.x(), m_pos.y() );
 }
 
 
 
 void AndroidPointingDevice::scrollDown()
 {
-	QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/PointingDevice/Android/AnyVncAccessibilityService", "swipeUp", "(II)V", m_pos.x(), m_pos.y() );
+	QAndroidJniObject::callStaticMethod<void>( "com/anyvnc/AnyVnc/AnyVncAccessibilityService", "swipeUp", "(II)V", m_pos.x(), m_pos.y() );
 }
 
 

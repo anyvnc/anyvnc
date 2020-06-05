@@ -1,4 +1,4 @@
-package com.anyvnc.AnyVnc.Server;
+package com.anyvnc.AnyVnc;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
@@ -17,30 +17,34 @@ public class AnyVncAccessibilityService extends AccessibilityService {
 	public void onInterrupt() { }
 
 	@Override
-	public void onCreate()
+	public void onServiceConnected()
 	{
-		super.onCreate();
+		super.onServiceConnected();
 		instance = this;
 	}
 
 	public static void tap( int x, int y )
 	{
-		instance.dispatchGesture( createClick( x, y, ViewConfiguration.getTapTimeout() + 50 ), null, null );
+		if( instance != null )
+			instance.dispatchGesture( createClick( x, y, ViewConfiguration.getTapTimeout() + 50 ), null, null );
 	}
 
 	public static void longPress( int x, int y )
 	{
-		instance.dispatchGesture( createClick( x, y, ViewConfiguration.getLongPressTimeout() + 200 ), null, null );
+		if( instance != null )
+			instance.dispatchGesture( createClick( x, y, ViewConfiguration.getLongPressTimeout() + 200 ), null, null );
 	}
 
 	public static void swipeDown( int x, int y )
 	{
-		instance.dispatchGesture( createSwipe( x, y, x, y+100 ), null, null );
+		if( instance != null )
+			instance.dispatchGesture( createSwipe( x, y, x, y+100 ), null, null );
 	}
 
 	public static void swipeUp( int x, int y )
 	{
-		instance.dispatchGesture( createSwipe( x, y, x, y-100 ), null, null );
+		if( instance != null )
+			instance.dispatchGesture( createSwipe( x, y, x, y-100 ), null, null );
 	}
 
 	private static GestureDescription createClick( int x, int y, int duration )
