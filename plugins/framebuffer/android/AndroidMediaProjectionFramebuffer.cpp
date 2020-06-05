@@ -272,13 +272,22 @@ AndroidMediaProjectionFramebuffer::BufferState AndroidMediaProjectionFramebuffer
 
 	QMutexLocker locker( &m_screenCapturerMutex );
 
-	avqDebug() << "Capturing image";
-
-	if( rects &&
-		m_screenCapturer.isValid() &&
-		( image = m_screenCapturer.callObjectMethod( "capture",
-													 "()Landroid/media/Image;" ) ).isValid() )
+	if( rects && m_screenCapturer.isValid())
 	{
+		avqDebug() << "Capturing image";
+
+		auto image = m_screenCapturer.callObjectMethod( "capture", "()Landroid/media/Image;" );
+
+		if( image.isValid() == false )
+		{
+			if( m_data && m_size.isValid() )
+			{
+				return BufferState::Ready;
+			}
+
+			return BufferState::WaitingForCapturer;
+		}
+
 		const auto imageWidth = image.callMethod<jint>("getWidth");
 		const auto imageHeight = image.callMethod<jint>("getHeight");
 		const size_t pixelCount = size_t( imageWidth * imageHeight );
