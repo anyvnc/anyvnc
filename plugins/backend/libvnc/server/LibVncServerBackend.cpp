@@ -187,7 +187,7 @@ bool LibVncServerBackend::handleFramebufferUpdate()
 	bool modified = false;
 
 	const auto updateFlags = m_server->framebuffer()->update( [this, &modified]( Types::Rectangle rect ) {
-		rfbMarkRectAsModified( m_rfbScreen, rect.left(), rect.top(), rect.right(), rect.bottom() );
+		rfbMarkRectAsModified( m_rfbScreen, rect.left(), rect.top(), rect.right()+1, rect.bottom()+1 );
 		modified = true;
 	} );
 
