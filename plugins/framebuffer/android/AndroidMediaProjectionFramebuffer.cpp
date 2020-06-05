@@ -215,7 +215,7 @@ AndroidMediaProjectionFramebuffer::UpdateFlags AndroidMediaProjectionFramebuffer
 	case BufferState::Updated:
 		for( const auto& rect : qAsConst(rects) )
 		{
-			visitor( { rect.left(), rect.top(), rect.right(), rect.bottom() } );
+			visitor( rect );
 		}
 		break;
 	}
